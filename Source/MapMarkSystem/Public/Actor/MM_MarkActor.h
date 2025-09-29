@@ -39,7 +39,11 @@ public:
 	void ServerHideMark();
 	virtual void ServerHideMark_Implementation();
 
-	//更新标记（需要在服务器调用广播到每个端）
+	/*更新标记（需要在服务器调用广播到每个端）
+	* ToTarget：挂载的对象，如果Actor身上有UMM_AttachComponent组件会将标记挂载到该组件上。
+	* ToLocation：如果ToTarget有效且没有UMM_AttachComponent组件时，标记挂载在Actor上后会偏移ToLocation的距离
+	* 如果ToTarget无效，则会将标记设置到ToLocation位置
+	*/
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void NetMultiUpdateMark(AActor* ToTarget, FVector ToLocation, FMM_MarkInfo NewMarkInfo);
 

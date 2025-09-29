@@ -19,12 +19,12 @@ AMM_MarkActor* UMM_Subsystem::SpawnMarkTo(AActor* MarkOwner, AActor* ToTarget, F
     return MarkActor;
 }
 
-AMM_MarkActor* UMM_Subsystem::SpawnMarkToFromDT(AActor* MarkOwner, AActor* ToTarget, FVector ToLocation, FName RowName)
+AMM_MarkActor* UMM_Subsystem::SpawnMarkToFromHandle(AActor* MarkOwner, AActor* ToTarget, FVector ToLocation, FMM_MarkInfoHandle MarkInfoHandle)
 {
     UDataTable* MarkInfoDataTable = UMM_Config::GetInstance()->MarkInfoDataTable.LoadSynchronous();
-    if (MarkInfoDataTable && MarkInfoDataTable->GetRowNames().Contains(RowName))
+    if (MarkInfoDataTable && MarkInfoDataTable->GetRowNames().Contains(MarkInfoHandle.RowName))
     {
-        FMM_MarkInfo* MarkInfo = MarkInfoDataTable->FindRow<FMM_MarkInfo>(RowName, TEXT(""));
+        FMM_MarkInfo* MarkInfo = MarkInfoDataTable->FindRow<FMM_MarkInfo>(MarkInfoHandle.RowName, TEXT(""));
         return SpawnMarkTo(MarkOwner, ToTarget, ToLocation, *MarkInfo);
     }
     return nullptr;

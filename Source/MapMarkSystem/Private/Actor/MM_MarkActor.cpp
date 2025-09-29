@@ -44,7 +44,7 @@ void AMM_MarkActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (GetLocalRole() != ENetRole::ROLE_Authority)//服务器不需要UI
+	if (!UKismetSystemLibrary::IsServer(this))//服务器不需要UI
 	{
 		MarkUserWidget = Cast<UMM_MarkUserWidget>(WidgetComponent->GetWidget());
 		MarkUserWidget->MarkActor = this;
@@ -59,6 +59,10 @@ void AMM_MarkActor::Destroyed()
 	if (MarkUserWidget)
 	{
 		MarkUserWidget->RemoveFromParent();
+		if (MarkUserWidget->HAxisMark)
+		{
+			MarkUserWidget->HAxisMark->RemoveFromParent();
+		}
 	}
 }
 
@@ -98,11 +102,12 @@ void AMM_MarkActor::NetMultiUpdateMark_Implementation(AActor* ToTarget, FVector 
 		if (AttachComponent)//只有有Attach组件的目标才算是一个“可以被追踪标记的目标” 否则这次仅认为是一个位置标记
 		{
 			AttachToComponent(AttachComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+			GetRootComponent()->SetRelativeLocation(MarkLocation);
 		}
 		else
 		{
-			DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-			SetActorLocation(MarkLocation);
+			AttachToActor(MarkTarget, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+			GetRootComponent()->SetRelativeLocation(MarkLocation);
 		}
 	}
 	else
@@ -128,7 +133,8 @@ void AMM_MarkActor::NetMultiUpdateMark_Implementation(AActor* ToTarget, FVector 
 			GetWorld()->GetTimerManager().SetTimer(AutoHideTimeHandle, this, &AMM_MarkActor::ServerHideMark, MarkInfo.AutoHideTime);
 		}
 	}
-	else//客户端才会有UI
+
+	if (!UKismetSystemLibrary::IsServer(this))
 	{
 		if (MarkUserWidget)
 		{

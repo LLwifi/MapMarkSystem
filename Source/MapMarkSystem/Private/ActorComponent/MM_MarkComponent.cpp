@@ -55,12 +55,10 @@ AMM_MarkActor* UMM_MarkComponent::ServerCameraTraceMarkByChannel(FMM_MarkRayInfo
 
 		FVector MarkToLocation;
 		UDataTable* MarkInfoDataTable = UMM_Config::GetInstance()->MarkInfoDataTable.LoadSynchronous();
-		if (bIsAutoGetMarkInfo && UMM_Config::GetInstance()->MarkTraceInfo.Contains(nullptr))//如果是自动获取MarkInfo先将信息设置为Null的 后续如果命中了单位再尝试寻找
+		//如果是自动获取MarkInfo先将信息设置为Null的 后续如果命中了单位再尝试寻找
+		if (MarkInfoDataTable)
 		{
-			if (MarkInfoDataTable && MarkInfoDataTable->GetRowNames().Contains(UMM_Config::GetInstance()->MarkTraceInfo[nullptr].RowName))
-			{
-				MarkInfo = *MarkInfoDataTable->FindRow<FMM_MarkInfo>(UMM_Config::GetInstance()->MarkTraceInfo[nullptr].RowName, TEXT(""));
-			}
+			MarkInfo = *MarkInfoDataTable->FindRow<FMM_MarkInfo>(UMM_Config::GetInstance()->NullMarkTraceInfo.RowName, TEXT(""));
 		}
 
 		//如果考虑模糊标记，这里可以使用圆形的射线

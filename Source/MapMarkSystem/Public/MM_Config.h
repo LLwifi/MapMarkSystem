@@ -10,6 +10,7 @@
 
 class UMM_MarkUserWidget;
 
+
 /*标记信息的句柄
 * 主要是DT对应的行名称
 */
@@ -21,7 +22,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FName RowName;
 };
-
 
 /**
  * 编辑器下的通用配置
@@ -74,10 +74,14 @@ public:
 
 	/*标点射线命中不同的类要使用的标点信息
 	* 判断顺序是从上往下
-	* None：表示没有命中单位时的标点信息
 	*/
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly)
 	TMap<TSoftClassPtr<AActor>, FMM_MarkInfoHandle> MarkTraceInfo;
+
+	/*标记为空或MarkTraceInfo没找到对应信息时使用的标记信息
+	*/
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly)
+	FMM_MarkInfoHandle NullMarkTraceInfo;
 
 	/*从MapCameraActor中隐藏Actor的tag值
 	* 场景中的ActorTag如果有这个值就会在相机拍摄的纹理上隐藏————在MapCameraActor的构造中会处理场景中全部的Actor

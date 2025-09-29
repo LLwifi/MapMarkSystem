@@ -57,9 +57,12 @@ public:
 	void SetDistance(float Distance,  const FText& DistanceText);
 	virtual void SetDistance_Implementation(float Distance, const FText& DistanceText);
 public:
-	//标记UI组件
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = True))
 	AMM_MarkActor* MarkActor;
+
+	//对应（水平）坐标轴上的该标记UI
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = True))
+	UMM_MarkUserWidget* HAxisMark;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = True))
 	FMM_MarkInfo MarkInfo;

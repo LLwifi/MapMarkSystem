@@ -27,7 +27,7 @@ public:
 
 	//创建标记到...信息取自DataTable表（标记发起/拥有者，标记目标位置，标记单位Actor，行名称）
 	UFUNCTION(BlueprintCallable)
-	AMM_MarkActor* SpawnMarkToFromDT(AActor* MarkOwner, AActor* ToTarget, FVector ToLocation, FName RowName);
+	AMM_MarkActor* SpawnMarkToFromHandle(AActor* MarkOwner, AActor* ToTarget, FVector ToLocation, FMM_MarkInfoHandle MarkInfoHandle);
 
 	//移除标记
 	UFUNCTION(BlueprintCallable)

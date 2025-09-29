@@ -70,9 +70,6 @@ public:
 	//标记是否同步显示到大地图
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsSyncDisplayToMap = false;
-
-
-
 };
 
 /*水平轴标记信息
@@ -128,13 +125,13 @@ public:
 	/*自动隐藏时间：当标记显示达到多少时间后自动隐藏
 	* 该值 = -1时，表示不会因为时间而自动隐藏
 	*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Units = "s"))
 	float AutoHideTime = -1.0f;
 
 	/*隐藏距离：当标记与标记发起者的距离超过该值时，隐藏该标记
 	* 该值 = -1时，表示不会因为距离而隐藏
 	*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Units = "mm"))
 	float HideDistance = -1.0f;
 
 	//是否显示距离
