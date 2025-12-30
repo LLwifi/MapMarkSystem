@@ -30,6 +30,7 @@ void UMM_MarkComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	DOREPLIFETIME(UMM_MarkComponent, RoleSign);
 	DOREPLIFETIME(UMM_MarkComponent, MaxMarkNum);
 	DOREPLIFETIME(UMM_MarkComponent, AllMarkActor);
 }
@@ -62,7 +63,8 @@ AMM_MarkActor* UMM_MarkComponent::ServerCameraTraceMarkByChannel(FMM_MarkRayInfo
 		}
 
 		//如果考虑模糊标记，这里可以使用圆形的射线
-		if (UKismetSystemLibrary::LineTraceSingle(this, CameraLocation, TraceEndLocation, TraceChannel, MarkRayInfo.bTraceComplex, MarkRayInfo.ActorsToIgnore, DrawDebugType, OutHit, MarkRayInfo.bIgnoreSelf, TraceColor, TraceHitColor, DrawTime))
+		UKismetSystemLibrary::LineTraceSingle(this, CameraLocation, TraceEndLocation, TraceChannel, MarkRayInfo.bTraceComplex, MarkRayInfo.ActorsToIgnore, DrawDebugType, OutHit, MarkRayInfo.bIgnoreSelf, TraceColor, TraceHitColor, DrawTime);
+		if (OutHit.GetActor())
 		{
 			MarkToLocation = OutHit.Location;
 			if (bIsAutoGetMarkInfo && MarkInfoDataTable && OutHit.GetActor())
@@ -88,6 +90,11 @@ AMM_MarkActor* UMM_MarkComponent::ServerCameraTraceMarkByChannel(FMM_MarkRayInfo
 		else
 		{
 			MarkToLocation = OutHit.TraceEnd;
+		}
+
+		if (UMM_Config::GetInstance()->RoleSignColor.Contains(GetRoleSign()))
+		{
+			MarkInfo.RoleSignColor = UMM_Config::GetInstance()->RoleSignColor[GetRoleSign()];
 		}
 		return ServerMarkTo(OutHit.GetActor(), MarkToLocation, MarkInfo);
 	}
@@ -131,5 +138,16 @@ void UMM_MarkComponent::RemoveMark(AMM_MarkActor* MarkActor)
 			MySubsystem->RemoveMark(MarkActor);
 		}
 	}
+}
+
+FName UMM_MarkComponent::SetRoleSign(FName NewSign)
+{
+	RoleSign = NewSign;
+	return RoleSign;
+}
+
+FName UMM_MarkComponent::GetRoleSign()
+{
+	return RoleSign;
 }
 

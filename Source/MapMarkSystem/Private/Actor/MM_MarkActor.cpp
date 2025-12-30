@@ -48,9 +48,14 @@ void AMM_MarkActor::BeginPlay()
 	{
 		MarkUserWidget = Cast<UMM_MarkUserWidget>(WidgetComponent->GetWidget());
 		MarkUserWidget->MarkActor = this;
+		// 绑定关卡切换事件
+		FWorldDelegates::LevelRemovedFromWorld.AddUObject(this, &AMM_MarkActor::OnLevelRemoved);
 	}
 
-	NetMultiUpdateMark(MarkTarget, MarkLocation, MarkInfo);
+	if (bBeginPlayIsUpdateMark)
+	{
+		NetMultiUpdateMark(MarkTarget, MarkLocation, MarkInfo);
+	}
 }
 
 void AMM_MarkActor::Destroyed()
@@ -70,11 +75,18 @@ void AMM_MarkActor::ServerShowMark_Implementation()
 {
 	if (!bIsShow)
 	{
-		//if (MarkUserWidget)
-		//{
-		//	MarkUserWidget->ShowMark();
-		//}
 		bIsShow = true;
+		//自动隐藏逻辑
+		if (MarkInfo.AutoHideTime > 0.0f)
+		{
+			GetWorld()->GetTimerManager().SetTimer(AutoHideTimeHandle, this, &AMM_MarkActor::ServerHideMark, MarkInfo.AutoHideTime);
+		}
+
+		//如果是纯在客户端调用该函数，那么也需要对UI进行处理
+		if (!UKismetSystemLibrary::IsServer(this))
+		{
+			ReplicatedUsing_IsShowChange();
+		}
 	}
 }
 
@@ -82,11 +94,13 @@ void AMM_MarkActor::ServerHideMark_Implementation()
 {
 	if (bIsShow)
 	{
-		//if (MarkUserWidget)
-		//{
-		//	MarkUserWidget->HideMark();
-		//}
 		bIsShow = false;
+
+		//如果是纯在客户端调用该函数，那么也需要对UI进行处理
+		if (!UKismetSystemLibrary::IsServer(this))
+		{
+			ReplicatedUsing_IsShowChange();
+		}
 	}
 }
 
@@ -106,8 +120,9 @@ void AMM_MarkActor::NetMultiUpdateMark_Implementation(AActor* ToTarget, FVector 
 		}
 		else
 		{
-			AttachToActor(MarkTarget, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-			GetRootComponent()->SetRelativeLocation(MarkLocation);
+			SetActorLocation(ToLocation);
+			AttachToActor(MarkTarget, FAttachmentTransformRules::KeepWorldTransform);
+			//GetRootComponent()->SetRelativeLocation(MarkLocation);
 		}
 	}
 	else
@@ -122,15 +137,15 @@ void AMM_MarkActor::NetMultiUpdateMark_Implementation(AActor* ToTarget, FVector 
 	{
 		ServerShowMark();
 
-		//隐藏距离检测
-		if (MarkInfo.HideDistance > 0.0f)
-		{
-			GetWorld()->GetTimerManager().SetTimer(HideDistanceCheckTimeHandle, this, &AMM_MarkActor::HideDistanceCheck, UMM_Config::GetInstance()->MarkHideCheckInterval, true);
-		}
 		//自动隐藏逻辑
 		if (MarkInfo.AutoHideTime > 0.0f)
 		{
 			GetWorld()->GetTimerManager().SetTimer(AutoHideTimeHandle, this, &AMM_MarkActor::ServerHideMark, MarkInfo.AutoHideTime);
+		}
+		//隐藏距离检测
+		if (MarkInfo.HideDistance > 0.0f)
+		{
+			GetWorld()->GetTimerManager().SetTimer(HideDistanceCheckTimeHandle, this, &AMM_MarkActor::HideDistanceCheck, UMM_Config::GetInstance()->MarkHideCheckInterval, true);
 		}
 	}
 
@@ -189,6 +204,14 @@ void AMM_MarkActor::PlayMarkSound_Implementation()
 	if (SoundBase)
 	{
 		UGameplayStatics::CreateSound2D(this, SoundBase);
+	}
+}
+
+void AMM_MarkActor::OnLevelRemoved_Implementation(ULevel* InLevel, UWorld* InWorld)
+{
+	if (MarkUserWidget)
+	{
+		MarkUserWidget->RemoveFromParent();
 	}
 }
 

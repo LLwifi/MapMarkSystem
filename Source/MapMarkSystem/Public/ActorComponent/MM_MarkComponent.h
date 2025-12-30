@@ -50,7 +50,20 @@ public:
 	//移除标记
 	UFUNCTION(BlueprintCallable)
 	void RemoveMark(AMM_MarkActor* MarkActor);
+
+	//设置角色签名
+	UFUNCTION(BlueprintCallable)
+	FName SetRoleSign(FName NewSign);
+
+	//获取角色签名
+	UFUNCTION(BlueprintPure)
+	FName GetRoleSign();
 public:
+	/*角色签名
+	* 如果同一个标记不同玩家/角色需要显示的样式/颜色不同可以通过该值进行区分
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
+	FName RoleSign;
 	//射线的距离
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
 	float TraceDistance = 5000.0f;

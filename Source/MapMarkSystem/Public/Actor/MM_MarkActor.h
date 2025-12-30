@@ -66,23 +66,26 @@ public:
 	void PlayMarkSound();
 	virtual void PlayMarkSound_Implementation();
 
-	//UFUNCTION()
-	//void ReplicatedUsing_MarkInfoChange();
-	////MarkInfo同步函数
-	//UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	//void MarkInfoChange_Replicated();
-	//virtual void MarkInfoChange_Replicated_Implementation();
+	/*关卡移除回调
+	*/
+	UFUNCTION(BlueprintNativeEvent)
+	void OnLevelRemoved(ULevel* InLevel, UWorld* InWorld);
+	virtual void OnLevelRemoved_Implementation(ULevel* InLevel, UWorld* InWorld);
 
 	UFUNCTION()
 	void ReplicatedUsing_IsShowChange();
-
 public:
+	//当前标记是否是在显示状态
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = True))
+	bool bBeginPlayIsUpdateMark = true;
 
 	//标记对应的UI
 	UPROPERTY(BlueprintReadWrite)
 	UMM_MarkUserWidget* MarkUserWidget;
 
-	//当前标记是否是在显示状态
+	/*当前标记是否是在显示状态
+	* 该值在同步时会触发UI的更新
+	*/
 	UPROPERTY(BlueprintReadWrite, ReplicatedUsing = ReplicatedUsing_IsShowChange)
 	bool bIsShow = true;
 

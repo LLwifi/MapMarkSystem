@@ -57,6 +57,10 @@ public:
 	void SetDistance(float Distance,  const FText& DistanceText);
 	virtual void SetDistance_Implementation(float Distance, const FText& DistanceText);
 public:
+	//当前标记是否是在显示状态
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsShow = true;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = True))
 	AMM_MarkActor* MarkActor;
 

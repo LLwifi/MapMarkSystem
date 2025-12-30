@@ -78,6 +78,11 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly)
 	TMap<TSoftClassPtr<AActor>, FMM_MarkInfoHandle> MarkTraceInfo;
 
+	/*不同签名下的标记颜色
+	*/
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly)
+	TMap<FName, FLinearColor> RoleSignColor;
+
 	/*标记为空或MarkTraceInfo没找到对应信息时使用的标记信息
 	*/
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly)

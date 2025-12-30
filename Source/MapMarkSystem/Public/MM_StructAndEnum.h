@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include <Engine/DataTable.h>
 #include "MM_Config.h"
+#include <Slate/WidgetTransform.h>
 #include "MM_StructAndEnum.generated.h"
 
 class UMM_MarkUserWidget;
@@ -108,7 +109,18 @@ USTRUCT(BlueprintType)
 struct FMM_MarkInfo : public FTableRowBase
 {
 	GENERATED_BODY()
+	virtual void OnDataTableChanged(const UDataTable* InDataTable, const FName InRowName) override
+	{
+		FMM_MarkInfo* MarkInfo = InDataTable->FindRow<FMM_MarkInfo>(InRowName, TEXT(""));
+		if (MarkInfo)
+		{
+			MarkInfo->MarkID = InRowName;
+		}
+	}
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName MarkID;
+
 	/*标记的UI类
 	* 在普通标记和屏幕追踪时会显示该UI
 	*/
@@ -121,6 +133,15 @@ public:
 	//标记颜色
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FLinearColor MarkColor = FLinearColor::White;
+	/*签名颜色
+	* 该值的结果在UMM_Config-》RoleSignColor进行配置
+	* 运行时在UMM_MarkComponent下获取RoleSign然后读取UMM_Config获取最终结果
+	*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	FLinearColor RoleSignColor = FLinearColor::White;
+	//标记的MarkTransform
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FWidgetTransform MarkTransform;
 
 	/*自动隐藏时间：当标记显示达到多少时间后自动隐藏
 	* 该值 = -1时，表示不会因为时间而自动隐藏

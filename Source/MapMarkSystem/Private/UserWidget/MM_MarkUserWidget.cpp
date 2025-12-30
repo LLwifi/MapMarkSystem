@@ -6,11 +6,13 @@
 void UMM_MarkUserWidget::ShowMark_Implementation()
 {
 	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	bIsShow = true;
 }
 
 void UMM_MarkUserWidget::HideMark_Implementation()
 {
 	SetVisibility(ESlateVisibility::Collapsed);
+	bIsShow = false;
 }
 
 void UMM_MarkUserWidget::MarkEnterOrLeaveView(bool IsEnter)
