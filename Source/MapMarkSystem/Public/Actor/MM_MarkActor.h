@@ -30,6 +30,8 @@ public:
 
 	virtual void Destroyed() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	//显示标记
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 		void ServerShowMark();
@@ -75,7 +77,7 @@ public:
 	UFUNCTION()
 	void ReplicatedUsing_IsShowChange();
 public:
-	//当前标记是否是在显示状态
+	//在BeginPlay时是否调用更新标记函数NetMultiUpdateMark
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ExposeOnSpawn = True))
 	bool bBeginPlayIsUpdateMark = true;
 

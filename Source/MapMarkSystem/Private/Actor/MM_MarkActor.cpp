@@ -46,10 +46,13 @@ void AMM_MarkActor::BeginPlay()
 
 	if (!UKismetSystemLibrary::IsServer(this))//服务器不需要UI
 	{
+		//MarkUserWidget = Cast<UMM_MarkUserWidget>(CreateWidget(GetWorld(), UMM_Config::GetInstance()->DefaultMarkWidgetClass.LoadSynchronous()));
 		MarkUserWidget = Cast<UMM_MarkUserWidget>(WidgetComponent->GetWidget());
 		MarkUserWidget->MarkActor = this;
-		// 绑定关卡切换事件
-		FWorldDelegates::LevelRemovedFromWorld.AddUObject(this, &AMM_MarkActor::OnLevelRemoved);
+		WidgetComponent->SetWidget(MarkUserWidget);
+
+		// 绑定关卡切换事件 在世界分区时，该回调会频繁调用
+		//FWorldDelegates::LevelRemovedFromWorld.AddUObject(this, &AMM_MarkActor::OnLevelRemoved);
 	}
 
 	if (bBeginPlayIsUpdateMark)
@@ -61,6 +64,13 @@ void AMM_MarkActor::BeginPlay()
 void AMM_MarkActor::Destroyed()
 {
 	Super::Destroyed();
+
+}
+
+void AMM_MarkActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
 	if (MarkUserWidget)
 	{
 		MarkUserWidget->RemoveFromParent();
@@ -120,9 +130,10 @@ void AMM_MarkActor::NetMultiUpdateMark_Implementation(AActor* ToTarget, FVector 
 		}
 		else
 		{
-			SetActorLocation(ToLocation);
+			//MarkLocation += MarkTarget->GetActorLocation();
+			//SetActorLocation(MarkLocation);
 			AttachToActor(MarkTarget, FAttachmentTransformRules::KeepWorldTransform);
-			//GetRootComponent()->SetRelativeLocation(MarkLocation);
+			GetRootComponent()->SetRelativeLocation(MarkLocation);
 		}
 	}
 	else
