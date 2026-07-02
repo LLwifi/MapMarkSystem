@@ -126,14 +126,12 @@ void AMM_MarkActor::NetMultiUpdateMark_Implementation(AActor* ToTarget, FVector 
 		if (AttachComponent)//只有有Attach组件的目标才算是一个“可以被追踪标记的目标” 否则这次仅认为是一个位置标记
 		{
 			AttachToComponent(AttachComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-			GetRootComponent()->SetRelativeLocation(MarkLocation);
+			//GetRootComponent()->SetRelativeLocation(MarkLocation);
 		}
 		else
 		{
-			//MarkLocation += MarkTarget->GetActorLocation();
-			//SetActorLocation(MarkLocation);
+			SetActorLocation(MarkLocation);
 			AttachToActor(MarkTarget, FAttachmentTransformRules::KeepWorldTransform);
-			GetRootComponent()->SetRelativeLocation(MarkLocation);
 		}
 	}
 	else
